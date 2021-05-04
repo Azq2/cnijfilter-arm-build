@@ -8,16 +8,20 @@ This libs available only for x86. No way for direct compiling cnijfilter for ARM
 - Copy all needed x86 libs using recursive `ldd`. And copy it to /usr/lib/bjlib/x86/
 - Patch all executables: set interpreter to `/usr/lib/bjlib/x86/ld-linux.so.2` and rpath to `/usr/lib/bjlib/x86`
 - Install these patched packages to ARM system
-- Install `qemu-user` and `qemu-user-binfmt`
+- Install `qemu-user` and `qemu-user-binfmt` (or `qemu-user-static`)
 - Now it works. Maybe :)
 
 # How to use
 On any x86 machine:
 ```bash
 # Install dependencies
-sudo apt install debootstrap
+sudo apt install debootstrap git util-linux
+
+# Get build system
+git clone https://github.com/Azq2/cnijfilter-arm-build
 
 # Start building in chroot
+cd cnijfilter-arm-build
 sudo ./build.sh build
 
 # Get .deb packages
@@ -28,12 +32,13 @@ ls -lah ./result/light
 On ARM machine:
 ```bash
 # Install dependencies
-sudo apt install qemu-user qemu-user-binfmt
+sudo apt install qemu-user qemu-user-binfmt # or sudo apt install qemu-user-static
 
 # Install common for all printers package
 sudo dpkg -i cnijfilter-common.deb
 
 # Install printer-specific package
+# Choose right package for your printer! e400series only for reference!
 sudo dpkg -i cnijfilter-e400series.deb
 ```
 
@@ -81,8 +86,8 @@ Minimal apparmor rules:
 
 Create file **/etc/apparmor.d/cnijfilter-filters** with this contents and restart apparmor:
 ```
-systemctl reload apparmor
-aa-enforce cnijfilter-filters
+sudo systemctl reload apparmor
+sudo aa-enforce cnijfilter-filters
 ```
 
 **Note:** this minimal file full coverage all executables in **light** package. For **full** package you need write additional rules by yourself.
