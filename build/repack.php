@@ -121,7 +121,7 @@ function patchDebianControl($path) {
 			return "Depends: qemu-user, qemu-user-binfmt\n";
 		}
 	}, $content);
-	$content = str_replace("Architecture: i386", "Architecture: any", $content);
+	$content = str_replace("Architecture: i386", "Architecture: all", $content);
 	file_put_contents($path, $content);
 }
 
