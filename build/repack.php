@@ -75,9 +75,9 @@ foreach (glob(__DIR__."/build/*.deb") as $file) {
 }
 
 echo "Copy x86 libs...\n";
-cmd("mkdir", "-p", $tmp_dir."/common/usr/lib/bjlib/x86");
+cmd("mkdir", "-p", $tmp_dir."/common/usr/lib/bjlib");
 foreach ($analyzer->getLibs() as $lib)
-	cmd("cp", $lib, $tmp_dir."/common/usr/lib/bjlib/x86");
+	cmd("cp", $lib, $tmp_dir."/common/usr/lib/bjlib");
 
 echo "Build debs...\n";
 cmd("mkdir", "-p", $result_dir);
@@ -118,7 +118,7 @@ function patchDebianControl($path) {
 		if (preg_match("/cnijfilter-common/", $m[1])) {
 			return "Depends: cnijfilter-common\n";
 		} else {
-			return "Depends: qemu-user, qemu-user-binfmt\n";
+			return "Depends: qemu-user | qemu-user-static, qemu-user-binfmt | qemu-user-static\n";
 		}
 	}, $content);
 	$content = str_replace("Architecture: i386", "Architecture: all", $content);
@@ -133,8 +133,16 @@ function patchElfs($analyzer, $path) {
 		if ($info->isFile() && isElf($info->getPathname())) {
 			$analyzer->analyze($info->getPathname());
 			
-			if (!preg_match("/\.so/", $info->getPathname()))
-				cmd("patchelf", "--set-interpreter", "/usr/lib/bjlib/x86/ld-linux.so.2", "--set-rpath", "/usr/lib/bjlib/x86/", "--force-rpath", $info->getPathname());
+			if (preg_match("/\.so/", $info->getPathname())) {
+				if (preg_match("#^/usr/lib/#", $info->getPathname())) {
+					if (!file_exists("$path/usr/lib/bjlib"))
+						cmd("mkdir", "-p", "$path/usr/lib/bjlib");
+					
+					cmd("mv", $info->getPathname(), "$path/usr/lib/bjlib");
+				}
+			} else {
+				cmd("patchelf", "--set-interpreter", "/usr/lib/bjlib/ld-linux.so.2", "--set-rpath", "/usr/lib/bjlib/", "--force-rpath", $info->getPathname());
+			}
 		}
 	}
 }
