@@ -10,3 +10,48 @@ This libs available only for x86. No way for direct compiling cnijfilter for ARM
 - Install these patched packages to ARM system
 - Install `qemu-user` and `qemu-user-binfmt`
 - Now it works. Maybe :)
+
+# How to use
+On any x86 machine:
+```bash
+# Install dendencies
+sudo apt install debootstrap
+
+# Start building in chroot
+sudo ./build.sh build
+
+# Get .deb packages
+ls -lah ./result/full
+ls -lah ./result/light
+```
+
+On ARM machine:
+```bash
+# Install dendencies
+sudo apt install qemu-user qemu-user-binfmt
+
+# Install common for all printers package
+sudo dpkg -i cnijfilter-common.deb
+
+# Install printer-specific package
+sudo dpkg -i cnijfilter-e400series.deb
+```
+
+# Full vs Light
+| Item              | Full | Light |
+|-------------------|------|-------|
+| PPD files         | +    | +     |
+| CUPS filters      | +    | +     |
+| CUPS backends     | +    | -     |
+| lgmon             | +    | -     |
+| canon-maintenance | +    | -     |
+| cngpij            | +    | -     |
+| cngpijmnt         | +    | -     |
+| cnijlgmon2        | +    | -     |
+| cnijnetprn        | +    | -     |
+| cnijnpr           | +    | -     |
+| docs              | +    | -     |
+
+In most cases full package is not necessary. For CUPS working we need only CUPS filters.
+
+Backends for usb or net already presents in CUPS.
