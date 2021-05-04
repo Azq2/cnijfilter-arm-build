@@ -56,6 +56,37 @@ In most cases full package is not necessary. For CUPS working we need only CUPS 
 
 Backends for usb or net already presents in CUPS.
 
+# Security
+CUPS filters don't need any specific permissions.
+
+Minimal apparmor rules:
+```
+#include <tunables/global>
+
+/usr/bin/bjfilter* {
+	#include <abstractions/base>
+	@{PROC}/sys/vm/mmap_min_addr r,
+}
+
+/usr/bin/cif[a-z]*[0-9d]* {
+	#include <abstractions/base>
+	@{PROC}/sys/vm/mmap_min_addr r,
+}
+
+/usr/lib/cups/filter/{cmdtocanonij,pstocanonbj,pstocanonij} {
+	#include <abstractions/base>
+	@{PROC}/sys/vm/mmap_min_addr r,
+}
+```
+
+Create file **/etc/apparmor.d/cnijfilter-filters** with this contents and restart apparmor:
+```
+systemctl reload apparmor
+aa-enforce cnijfilter-filters
+```
+
+**Note:** this minimal file full coverage all executables in **light** package. For **full** package you need write additional rules by yourself.
+
 # Why not use debian multiarch (like dpkg --add-architecture i386)?
 I dont know how make it work. I think, i386 libs on armhf is broken. All my attepts ends by apt error:
 ```
