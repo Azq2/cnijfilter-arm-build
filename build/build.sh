@@ -30,5 +30,7 @@ if [[ ! -f /opt/build/build.ok ]]; then
 	touch /opt/build/build.ok
 fi
 
-# php /opt/repack.php full
-php /opt/repack.php light
+php /opt/repack.php full || exit 1
+php /opt/repack.php light || exit 1
+
+touch /opt/build/result.ok

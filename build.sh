@@ -1,6 +1,7 @@
 #!/bin/bash
 BIN=$0
 ROOT=$(dirname $0)
+ROOT=$(readlink -f $ROOT)
 ACTION=$1
 
 CHROOT="$ROOT/chroot"
@@ -31,8 +32,6 @@ function prepare_chroot {
 	copy_to_chroot setup.sh +x
 	copy_to_chroot build.sh +x
 	copy_to_chroot repack.php +x
-	copy_to_chroot get-libs.php +x
-	copy_to_chroot remove-dups.php +x
 }
 
 function go_chroot {
@@ -42,7 +41,26 @@ function go_chroot {
 if [[ $ACTION = "build" ]]
 then
 	prepare_chroot
+	
+	rm -rf "$CHROOT/opt/build/result.ok"
+	
 	go_chroot /opt/setup.sh build
+	
+	if [[ -f "$CHROOT/opt/build/result.ok" ]]; then
+		rm -rf "$ROOT/result"
+		rm -rf "$CHROOT/opt/build/result.ok"
+		mv "$CHROOT/opt/build/result" "$ROOT/result"
+		
+		echo ""
+		echo "================================================================================================"
+		echo "Build done! You can see deb files in these dirs:"
+		echo "result/light     this dir contains lightweight packages (only CUPS filters)"
+		echo "result/full      this dir contains packages with all cnijfilter tools"
+		echo "================================================================================================"
+		echo ""
+		
+		du -hd1 "$ROOT/result"
+	fi
 elif [[ $ACTION = "bash" ]]; then
 	prepare_chroot
 	go_chroot /opt/setup.sh bash
@@ -63,7 +81,7 @@ else
 	echo "  $BIN bash"
 	echo ""
 	echo "Bash console (root):"
-	echo "  $BIN bash"
+	echo "  $BIN root_bash"
 	echo ""
 	echo "Clean:"
 	echo "  $BIN clean"

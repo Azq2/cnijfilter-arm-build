@@ -59,7 +59,7 @@ foreach (glob(__DIR__."/build/*.deb") as $file) {
 				"-iname", "cnij*", "-o",
 				"-iname", "cngp*", "-o",
 				"-iname", "libcnnet*", "-o",
-				"canon-maintenance",
+				"-iname", "canon-maintenance",
 			")", "-delete"
 		);
 	}
@@ -83,7 +83,7 @@ echo "Build debs...\n";
 cmd("mkdir", "-p", $result_dir);
 foreach ($dirs as $name) {
 	echo "build: $name\n";
-	cmd("dpkg-deb", "-b", "$tmp_dir/$name", "$result_dir/cnijfilter-$name.deb");
+	cmd("fakeroot", "dpkg-deb", "-b", "$tmp_dir/$name", "$result_dir/cnijfilter-$name.deb");
 }
 
 class LibsAnalyzer {
