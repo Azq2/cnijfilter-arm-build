@@ -54,4 +54,4 @@ sudo dpkg -i cnijfilter-e400series.deb
 
 In most cases full package is not necessary. For CUPS working we need only CUPS filters.
 
-USB or Network backend already exists in CUPS.
+Backends for usb or net already presents in CUPS.
