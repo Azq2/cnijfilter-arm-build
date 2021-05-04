@@ -14,7 +14,7 @@ This libs available only for x86. No way for direct compiling cnijfilter for ARM
 # How to use
 On any x86 machine:
 ```bash
-# Install dendencies
+# Install dependencies
 sudo apt install debootstrap
 
 # Start building in chroot
@@ -27,7 +27,7 @@ ls -lah ./result/light
 
 On ARM machine:
 ```bash
-# Install dendencies
+# Install dependencies
 sudo apt install qemu-user qemu-user-binfmt
 
 # Install common for all printers package
