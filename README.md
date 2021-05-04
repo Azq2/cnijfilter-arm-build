@@ -56,5 +56,17 @@ In most cases full package is not necessary. For CUPS working we need only CUPS 
 
 Backends for usb or net already presents in CUPS.
 
+# Why not use debian multiarch (like dpkg --add-architecture i386)?
+I dont know how make it work. I think, i386 libs on armhf is broken. All my attepts ends by apt error:
+```
+The following packages have unmet dependencies:
+ libcups2:i386 : Depends: libavahi-client3:i386 (>= 0.6.16) but it is not going to be installed
+                 Depends: libavahi-common3:i386 (>= 0.6.16) but it is not going to be installed
+                 Depends: libc6:i386 (>= 2.28) but it is not going to be installed
+                 Depends: libgnutls30:i386 (>= 3.6.9) but it is not going to be installed
+                 Depends: libgssapi-krb5-2:i386 (>= 1.17) but it is not going to be installed
+                 Depends: zlib1g:i386 (>= 1:1.2.0) but it is not going to be installed
+```
+
 # Where i can download already builded .deb's?
 Nowhere. Build it by yourself. :)
